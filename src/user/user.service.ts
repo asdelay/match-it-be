@@ -8,7 +8,7 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
   async create(createUserDto: CreateUserDto, cvUrl: string) {
     return await this.prisma.user.create({
-      data: { ...createUserDto, cvUrl },
+      data: { ...createUserDto, cvUrl, hashedPassword: 'temp pass' },
     });
   }
 
@@ -20,10 +20,10 @@ export class UserService {
     return await this.prisma.user.findFirst({ where: { id } });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto, cvName: string) {
     return await this.prisma.user.update({
       where: { id },
-      data: updateUserDto,
+      data: { ...updateUserDto, cvUrl: cvName },
     });
   }
 

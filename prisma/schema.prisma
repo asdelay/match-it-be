@@ -15,10 +15,26 @@ datasource db {
 }
 
 model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  fullName  String
-  phoneNumber String
-  jobTitle String
-  cvUrl String
+  id             Int         @id @default(autoincrement())
+  email          String      @unique
+  fullName       String
+  hashedPassword String
+  phoneNumber    String?
+  jobTitle       String?
+  cvUrl          String?
+  tokens         TokenData[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TokenData {
+  id                 String  @id @default(uuid())
+  hashedRefreshToken String
+  deviceName         String?
+  owner              User    @relation(fields: [ownerId], references: [id])
+  ownerId            Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
