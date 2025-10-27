@@ -24,6 +24,18 @@ export class RegisterDTO {
   password: string;
 }
 
+export class ResetPasswordDTO {
+  @IsString()
+  @Length(4)
+  newPassword: string;
+
+  @IsString()
+  tid: string;
+
+  @IsString()
+  token: string;
+}
+
 export class SafeUserDTO {
   constructor(user: User) {
     this.id = user.id;

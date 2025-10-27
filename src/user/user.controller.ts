@@ -37,21 +37,21 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);
   }
 
-  @Public()
-  @UseInterceptors(FileInterceptor('cv'))
+  @UseInterceptors(
+    FileInterceptor('cv', { limits: { fileSize: 15 * 1024 * 1024 } }),
+  )
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @UploadedFile() cv: Express.Multer.File,
     @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile() cv?: Express.Multer.File,
   ) {
-    return await this.userService.update(+id, updateUserDto, cv.originalname);
+    return await this.userService.update(+id, updateUserDto, cv);
   }
 
   @Delete(':id')

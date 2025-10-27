@@ -15,14 +15,15 @@ datasource db {
 }
 
 model User {
-  id             Int         @id @default(autoincrement())
-  email          String      @unique
+  id             Int          @id @default(autoincrement())
+  email          String       @unique
   fullName       String
   hashedPassword String
   phoneNumber    String?
   jobTitle       String?
-  cvUrl          String?
+  cvKey          String?
   tokens         TokenData[]
+  resetTokens    ResetToken[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -37,4 +38,12 @@ model TokenData {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ResetToken {
+  id               String   @id @default(uuid())
+  hashedResetToken String
+  expiresAt        DateTime
+  user             User     @relation(fields: [userId], references: [id])
+  userId           Int
 }
