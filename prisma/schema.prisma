@@ -33,7 +33,7 @@ model TokenData {
   id                 String  @id @default(uuid())
   hashedRefreshToken String
   deviceName         String?
-  owner              User    @relation(fields: [ownerId], references: [id])
+  owner              User    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId            Int
 
   createdAt DateTime @default(now())
@@ -44,6 +44,6 @@ model ResetToken {
   id               String   @id @default(uuid())
   hashedResetToken String
   expiresAt        DateTime
-  user             User     @relation(fields: [userId], references: [id])
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId           Int
 }
