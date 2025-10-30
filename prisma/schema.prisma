@@ -19,6 +19,7 @@ model User {
   email          String       @unique
   fullName       String
   hashedPassword String
+  notifications  Boolean      @default(false)
   phoneNumber    String?
   jobTitle       String?
   cvKey          String?

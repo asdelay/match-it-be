@@ -8,14 +8,15 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/decorators/public.decorator';
+import { UserGuard } from './user.guard';
 
 @Controller('user')
 export class UserController {
@@ -30,18 +31,26 @@ export class UserController {
     console.log({ ...file });
     return this.userService.create(body, file.originalname);
   }
-
+  //restrict this route before release
   @Public()
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  findAll(
+    @Query('page') page = '1',
+    @Query('limit') limit = '10',
+    @Query('orderBy') orderBy = 'jobTitle',
+    @Query('sort') sort = 'asc',
+    @Query('search') search = '',
+  ) {
+    return this.userService.findAll(+page, +limit, orderBy, sort, search);
   }
 
+  @UseGuards(UserGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);
   }
 
+  @UseGuards(UserGuard)
   @UseInterceptors(
     FileInterceptor('cv', { limits: { fileSize: 15 * 1024 * 1024 } }),
   )
@@ -54,10 +63,13 @@ export class UserController {
     return await this.userService.update(+id, updateUserDto, cv);
   }
 
+  @UseGuards(UserGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
+
+  //delete this before release
   @Delete()
   removeAll() {
     return this.userService.removeAll();

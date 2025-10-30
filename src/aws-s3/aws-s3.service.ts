@@ -1,4 +1,5 @@
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   PutObjectCommand,
   S3Client,
@@ -45,11 +46,24 @@ export class AwsS3Service {
   }
 
   async getSignedUrl(key: string, expiresInSeconds = 3600) {
+    if (!key) return '';
     const command = new GetObjectCommand({
       Bucket: this.bucket,
       Key: key,
     });
 
     return getSignedUrl(this.s3, command, { expiresIn: expiresInSeconds });
+  }
+
+  async deletePdf(key: string) {
+    const deletionResult = await this.s3.send(
+      new DeleteObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+      }),
+    );
+    if (!deletionResult)
+      throw new BadRequestException('Error while deleting previous CV');
+    return deletionResult;
   }
 }
